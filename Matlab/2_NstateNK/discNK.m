@@ -2,98 +2,67 @@
 % January 2018, Takeki Sunakawa
 clear all;
 
-damp = 1.0;
-
-% from Table 1 in the paper
-rstar = 3.5/4;
-bet = 1/(1+rstar/100);
-sig = 6.25;
-alp = 0.66;
-the = 7.66;
-ome = 0.47;
-kap = (1-alp)*(1-alp*bet)/alp*(1/sig+ome)/(1+ome*the); %0.024;
-lam = 0.048/16; %0.003;
+m.rstar = 3.5/4; % pH=0のときの、定常状態での名目金利の値
+m.bet = 1/(1+m.rstar/100); % 割引率(オイラー方程式の定常状態より)
+m.sig = 6.25;
+m.alp = 0.66;
+m.the = 7.66;
+m.ome = 0.47;
+m.kap = (1-m.alp)*(1-m.alp*m.bet)/m.alp*(1/m.sig+m.ome)/(1+m.ome*m.the); %0.024;
+m.lam = 0.048/16; %0.003;
 
 % joint shock process
-rhou = 0;
-rhog = 0.8;
-sigu = 0.154;
-sigg = 1.524;
-Ng = 31;
-Nu = 31;
-[Gg Pg] = tauchen(Ng,sig*rstar,rhog,sigg,3.0);
-[Gu Pu] = tauchen(Nu,0,rhou,sigu,3.0);
+m.rhou = 0;
+m.rhog = 0.8;
+m.sigu = 0.154;
+m.sigg = 1.524;
+m.Ng = 31;
+m.Nu = 31;
 
-Ns = Ng*Nu;
-Gs = zeros(Ns,2);
+m.maxiter = 2000; % 繰り返し回数の最大値
+m.tol = 1e-5; % 許容誤差
 
-for ig = 1:Ng
+%%
+tic;
+[yvec0 pvec0 rvec0 Gg Gu] = ti(m);
+toc;
+
+%%
+% replicate Figures 4-5 in the paper
+for ig = 1:m.Ng
     
-    for iu = 1:Nu
+    for iu = 1:m.Nu
         
-        Gs(Nu*(ig-1)+iu,1) = Gg(ig);
-        Gs(Nu*(ig-1)+iu,2) = Gu(iu);
+        ymat0(ig,iu) = yvec0(m.Nu*(ig-1)+iu,1);
+        pmat0(ig,iu) = pvec0(m.Nu*(ig-1)+iu,1);
+        rmat0(ig,iu) = rvec0(m.Nu*(ig-1)+iu,1);
         
     end
     
 end
 
-Ps = kron(Pg,Pu);
+rmat0 = rmat0; %-rstar;
+Gg = Gg; %-sig*rstar;
+idu = ceil(m.Nu/2);
+stg = 1;
+edg = ceil(m.Ng/2);
 
-% policy function iteration
-yvec0 = zeros(Ns,1);
-pvec0 = zeros(Ns,1);
-rvec0 = zeros(Ns,1);
-yvec1 = zeros(Ns,1);
-pvec1 = zeros(Ns,1);
-rvec1 = zeros(Ns,1);
-
-tol = 1e-10;
-diff = 1e+4;
-iter = 0;
-
-while(diff>tol)
-
-    for is = 1:Ns
-
-        g0 = Gs(is,1);
-        u0 = Gs(is,2);
-
-        ey = Ps(is,:)*yvec0;
-        epi = Ps(is,:)*pvec0;
-
-        p0 = (bet*epi+u0)/(1+kap^2/lam);
-        y0 = (-kap/lam)*p0;
-        r0 = (1/sig)*(ey - y0 + g0) + epi;
-                
-        if (r0<0)
-
-            y0 = ey - sig*(0 - epi) + g0;
-            p0 = kap*y0 + bet*epi + u0;
-            r0 = 0;
-
-        end
-        
-        yvec1(is,1) = y0;
-        pvec1(is,1) = p0;
-        rvec1(is,1) = r0;
-
-    end
-    
-    ydiff = max(abs(yvec1-yvec0));
-    pdiff = max(abs(pvec1-pvec0));
-    rdiff = max(abs(rvec1-rvec0));
-    diff = max([ydiff pdiff rdiff]);
-    iter = iter + 1;
-    s = sprintf( ' iteration %4d:  (%5.10f, %5.10f, %5.10f)', ...
-        iter, ydiff, pdiff, rdiff);    
-    disp(s);
-    
-    yvec0 = damp*yvec1 + (1-damp)*yvec0;
-    pvec0 = damp*pvec1 + (1-damp)*pvec0;
-    rvec0 = damp*rvec1 + (1-damp)*rvec0;
-    
-end
-
-%save ab5.mat Gs yvec0 pvec0 ivec0;
-%plotdiscab;
+figure;
+subplot(311);
+plot(Gg(stg:edg),ymat0(stg:edg,idu));
+xlim([Gg(stg) Gg(edg)]);
+ylim([-8 2]); yticks([-8:2:2]);
+grid on;
+xlabel('g'); ylabel('y');
+subplot(312);
+plot(Gg(stg:edg),4*pmat0(stg:edg,idu));
+xlim([Gg(stg) Gg(edg)]);
+ylim([-2 0.5]); yticks([-2:0.5:0.5]);
+grid on;
+xlabel('g'); ylabel('\pi');
+subplot(313);
+plot(Gg(stg:edg),4*rmat0(stg:edg,idu));
+xlim([Gg(stg) Gg(edg)]);
+%ylim([-4 0]); yticks([-4:1:0]);
+grid on;
+xlabel('g'); ylabel('i');

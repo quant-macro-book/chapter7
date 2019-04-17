@@ -1,21 +1,21 @@
 function [Z,Zprob] = tauchen(N,mu,rho,sigma,m)
 
-Z     = zeros(N,1); % グリッド
-Zprob = zeros(N,N); % 遷移確率の行列
-c     = (1-rho)*mu; % 定数項
+Z     = zeros(N,1); % �O���b�h
+Zprob = zeros(N,N); % �J�ڊm���̍s��
+c     = (1-rho)*mu; % �萔��
 
-% 等間隔のグリッドを定める
-% 最大値と最小値
+% ���Ԋu�̃O���b�h���߂�
+% �ő�l�ƍŏ��l
 zmax  = m*sqrt(sigma^2/(1-rho^2));
 zmin  = -zmax;
-% グリッド間の間隔
+% �O���b�h�Ԃ̊Ԋu
 w = (zmax-zmin)/(N-1);
 
 Z = linspace(zmin,zmax,N)';
-% 定常状態はmu
+% ����Ԃ�mu
 Z = Z + mu;
 
-% グリッドを所与として、遷移確率を求める
+% �O���b�h�����^�Ƃ��āA�J�ڊm�������߂�
 for j = 1:N
     for k = 1:N
         if k == 1
@@ -29,6 +29,6 @@ for j = 1:N
     end
 end
 
-% 正規分布の累積分布関数
+% ���K���z�̗ݐϕ��z�֐�
 function c = cdf_normal(x)
     c = 0.5*erfc(-x/sqrt(2));

@@ -3,12 +3,12 @@ function [yvec0 pvec0 rvec0] = ti(m)
 % disp('')
 % disp('-+- Solve a two-state model with time iteration -+-');
 
-%% STEP 1(a): ã‚°ãƒªãƒƒãƒ‰ç”Ÿæˆ
+%% STEP 1(a): ƒOƒŠƒbƒh¶¬
 Gs = [m.sH; m.sL];
 Ps = [1-m.pH m.pH;
     1-m.pL m.pL]; 
 
-%% è§£æçš„è§£
+%% ‰ğÍ“I‰ğ
 A = [-1+(1-m.pH) m.pH -(m.phi-1)*(1-m.pH) -(m.phi-1)*m.pH;
 m.kap 0 -1+m.bet*(1-m.pH) m.bet*m.pH;
 (1-m.pL) -1+m.pL (1-m.pL) m.pL;
@@ -21,13 +21,13 @@ piH = x(3);
 piL = x(4);
 rH = m.rstar + m.phi*((1-m.pH)*piH + m.pH*piL);
 
-%% STEP 1(b): æ”¿ç­–é–¢æ•°ã®åˆæœŸå€¤ã‚’å½“ã¦æ¨é‡
+%% STEP 1(b): ­ôŠÖ”‚Ì‰Šú’l‚ğ“–‚Ä„—Ê
 Ns = 2;
-% è§£æçš„è§£ã‚’åˆæœŸå€¤ã¨ã™ã‚‹(1å›ã®ç¹°ã‚Šè¿”ã—ã§åæŸ)
+% ‰ğÍ“I‰ğ‚ğ‰Šú’l‚Æ‚·‚é(1‰ñ‚ÌŒJ‚è•Ô‚µ‚Åû‘©)
 % yvec0 = [yH; yL];
 % pvec0 = [piH; piL];
 % rvec0 = [rH; 0];
-% é©å½“ãªåˆæœŸå€¤
+% “K“–‚È‰Šú’l
 yvec0 = zeros(Ns,1);
 pvec0 = zeros(Ns,1);
 rvec0 = zeros(Ns,1);
@@ -35,34 +35,34 @@ yvec1 = zeros(Ns,1);
 pvec1 = zeros(Ns,1);
 rvec1 = zeros(Ns,1);
 
-%% STEP 4: æ”¿ç­–é–¢æ•°ã‚’ç¹°ã‚Šè¿”ã—è¨ˆç®—
-diff = 1e+4; % æ”¿ç­–é–¢æ•°ã®ç¹°ã‚Šè¿”ã—èª¤å·®
-iter = 1; % ãƒ«ãƒ¼ãƒ—ãƒ»ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼
+%% STEP 4: ­ôŠÖ”‚ğŒJ‚è•Ô‚µŒvZ
+diff = 1e+4; % ­ôŠÖ”‚ÌŒJ‚è•Ô‚µŒë·
+iter = 1; % ƒ‹[ƒvEƒJƒEƒ“ƒ^[
 
 while(diff > m.tol)
 
     for is = 1:Ns
 
-        % ã‚·ãƒ§ãƒƒã‚¯ã®å€¤
+        % ƒVƒ‡ƒbƒN‚Ì’l
         s0 = Gs(is);
 
-        % å¤ã„æ”¿ç­–é–¢æ•°ã‹ã‚‰æœŸå¾…å€¤(ye, pie)ã‚’è¨ˆç®—
+        % ŒÃ‚¢­ôŠÖ”‚©‚çŠú‘Ò’l(ye, pie)‚ğŒvZ
         ye = Ps(is,:)*yvec0;
         pie = Ps(is,:)*pvec0;
 
-        % æœŸå¾…å€¤ã‚’æ‰€ä¸ã¨ã—ã¦æœ€é©åŒ–
+        % Šú‘Ò’l‚ğŠ—^‚Æ‚µ‚ÄÅ“K‰»
         r0 = max(m.rstar + m.phi*pie, 0);
         y0 = ye - (r0 - pie - s0);
         p0 = m.kap*y0 + m.bet*pie;
 
-        % æ–°ã—ã„æ”¿ç­–é–¢æ•°ã‚’ä¿å­˜
+        % V‚µ‚¢­ôŠÖ”‚ğ•Û‘¶
         yvec1(is,1) = y0;
         pvec1(is,1) = p0;
         rvec1(is,1) = r0;
 
     end
     
-    % ç¹°ã‚Šè¿”ã—è¨ˆç®—èª¤å·®ã‚’ç¢ºèª
+    % ŒJ‚è•Ô‚µŒvZŒë·‚ğŠm”F
     ydiff = max(abs(yvec1-yvec0));
     pdiff = max(abs(pvec1-pvec0));
     rdiff = max(abs(rvec1-rvec0));
@@ -70,7 +70,7 @@ while(diff > m.tol)
 
     disp([iter diff]);
 
-    % æ”¿ç­–é–¢æ•°ã‚’ã‚¢ãƒƒãƒ—ãƒ‡ãƒ¼ãƒˆ
+    % ­ôŠÖ”‚ğƒAƒbƒvƒf[ƒg
     yvec0 = yvec1;
     pvec0 = pvec1;
     rvec0 = rvec1;
