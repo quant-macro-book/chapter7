@@ -1,6 +1,5 @@
 function [Z,Zprob] = tauchen(N,mu,rho,sigma,m)
 
-
 Z     = zeros(N,1); % グリッド
 Zprob = zeros(N,N); % 遷移確率の行列
 c     = (1-rho)*mu; % 定数項
@@ -33,4 +32,3 @@ end
 % 正規分布の累積分布関数
 function c = cdf_normal(x)
     c = 0.5*erfc(-x/sqrt(2));
-

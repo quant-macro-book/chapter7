@@ -11,10 +11,10 @@ for ig = 1:Ng
     
 end
 
-imat0 = imat0-rstar;
-Gg = Gg-sig*rstar;
+imat0 = imat0; %-rstar;
+Gg = Gg; %-sig*rstar;
 idu = ceil(Nu/2);
-stg = 11;
+stg = 1;
 edg = ceil(Ng/2);
 
 figure;
@@ -33,7 +33,7 @@ xlabel('g'); ylabel('\pi');
 subplot(313);
 plot(Gg(stg:edg),4*imat0(stg:edg,idu));
 xlim([Gg(stg) Gg(edg)]);
-ylim([-4 0]); yticks([-4:1:0]);
+%ylim([-4 0]); yticks([-4:1:0]);
 grid on;
 xlabel('g'); ylabel('i');
 

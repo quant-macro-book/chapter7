@@ -43,16 +43,16 @@ Ps = kron(Pg,Pu);
 % policy function iteration
 yvec0 = zeros(Ns,1);
 pvec0 = zeros(Ns,1);
-ivec0 = zeros(Ns,1);
+rvec0 = zeros(Ns,1);
 yvec1 = zeros(Ns,1);
 pvec1 = zeros(Ns,1);
-ivec1 = zeros(Ns,1);
+rvec1 = zeros(Ns,1);
 
-crit = 1e-10;
+tol = 1e-10;
 diff = 1e+4;
 iter = 0;
 
-while(diff>crit)
+while(diff>tol)
 
     for is = 1:Ns
 
@@ -64,36 +64,36 @@ while(diff>crit)
 
         p0 = (bet*epi+u0)/(1+kap^2/lam);
         y0 = (-kap/lam)*p0;
-        i0 = (1/sig)*(ey - y0 + g0) + epi;
+        r0 = (1/sig)*(ey - y0 + g0) + epi;
                 
-        if (i0<0)
+        if (r0<0)
 
             y0 = ey - sig*(0 - epi) + g0;
             p0 = kap*y0 + bet*epi + u0;
-            i0 = 0;
+            r0 = 0;
 
         end
         
         yvec1(is,1) = y0;
         pvec1(is,1) = p0;
-        ivec1(is,1) = i0;
+        rvec1(is,1) = r0;
 
     end
     
     ydiff = max(abs(yvec1-yvec0));
     pdiff = max(abs(pvec1-pvec0));
-    idiff = max(abs(ivec1-ivec0));
-    diff = max([ydiff pdiff idiff]);
+    rdiff = max(abs(rvec1-rvec0));
+    diff = max([ydiff pdiff rdiff]);
     iter = iter + 1;
     s = sprintf( ' iteration %4d:  (%5.10f, %5.10f, %5.10f)', ...
-        iter, ydiff, pdiff, idiff);    
+        iter, ydiff, pdiff, rdiff);    
     disp(s);
     
     yvec0 = damp*yvec1 + (1-damp)*yvec0;
     pvec0 = damp*pvec1 + (1-damp)*pvec0;
-    ivec0 = damp*ivec1 + (1-damp)*ivec0;
+    rvec0 = damp*rvec1 + (1-damp)*rvec0;
     
 end
 
-save ab5.mat Gs yvec0 pvec0 ivec0;
+%save ab5.mat Gs yvec0 pvec0 ivec0;
 %plotdiscab;
