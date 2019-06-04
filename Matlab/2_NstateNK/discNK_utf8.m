@@ -4,7 +4,7 @@ clear all;
 
 m.rstar = 3.5/4; % pH=0�̂Ƃ��́A����Ԃł̖��ڋ����̒l
 m.bet = 1/(1+m.rstar/100); % ������(�I�C���[�������̒���Ԃ��)
-m.sig = 6.0; %6.25;
+m.sig = 6.25;
 m.alp = 0.66;
 m.the = 7.66;
 m.ome = 0.47;
@@ -14,7 +14,7 @@ m.lam = 0.048/16; %0.003;
 % joint shock process
 m.rhou = 0;
 m.rhog = 0.8;
-m.sigu = 1e-5; %0.154;
+m.sigu = 0.154;
 m.sigg = 1.524;
 m.Ng = 31;
 m.Nu = 31;
@@ -42,31 +42,7 @@ for ig = 1:m.Ng
 end
 
 rmat0 = rmat0; %-rstar;
-Gg = 4*(1/m.sig)*Gg;
-%Gg = Gg-m.sig*m.rstar;
+Gg = Gg; %-sig*rstar;
 idu = ceil(m.Nu/2);
 stg = 1;
 edg = ceil(m.Ng/2);
-
-figure;
-subplot(311);
-plot(Gg(stg:edg),ymat0(stg:edg,idu),'k-','LineWidth',2.0);
-xlim([Gg(stg) Gg(edg)]); xticks([-1:1:3]);
-ylim([-8 2]); yticks([-8:2:2]);
-grid on;
-ylabel('産出ギャップ, y');
-subplot(312);
-plot(Gg(stg:edg),4*pmat0(stg:edg,idu),'k-','LineWidth',2.0);
-xlim([Gg(stg) Gg(edg)]); xticks([-1:1:3]);
-ylim([-2 0.5]); yticks([-2:0.5:0.5]);
-grid on;
-ylabel('インフレ率, \pi');
-subplot(313);
-plot(Gg(stg:edg),4*rmat0(stg:edg,idu),'k-','LineWidth',2.0);
-hold on;
-plot(Gg(stg:edg),Gg(stg:edg),'k:');
-xlim([Gg(stg) Gg(edg)]); xticks([-1:1:3]);
-%ylim([-4 0]); yticks([-4:1:0]);
-grid on;
-xlabel('自然利子率, g');
-ylabel('政策金利, r_{n}');
