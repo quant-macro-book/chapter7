@@ -1,30 +1,30 @@
 clear all;
 
-m.rstar = 0.75; % pH=0‚Ì‚Æ‚«‚ÌA’èíó‘Ô‚Å‚Ì–¼–Ú‹à—˜‚Ì’l
-m.bet = 1/(1+m.rstar/100); % Š„ˆø—¦(ƒIƒCƒ‰[•û’ö®‚Ì’èíó‘Ô‚æ‚è)
-m.phi = 5.0;  % ƒeƒCƒ‰[ŒW”(’: ¬‚³‚¢‚ÆiL=0‚É‚È‚ç‚È‚¢)
-m.pL = 0.75;  % Šë‹@‚ÌŒp‘±Šm—¦
-m.sH = m.rstar; % ó‘ÔH‚Å‚Ì©‘R—˜q—¦‚Ì’l
+m.rstar = 0.75; % pH=0ã®ã¨ãã®ã€å®šå¸¸çŠ¶æ…‹ã§ã®åç›®é‡‘åˆ©ã®å€¤
+m.bet = 1/(1+m.rstar/100); % å‰²å¼•ç‡(ã‚ªã‚¤ãƒ©ãƒ¼æ–¹ç¨‹å¼ã®å®šå¸¸çŠ¶æ…‹ã‚ˆã‚Š)
+m.phi = 5.0;  % ãƒ†ã‚¤ãƒ©ãƒ¼ä¿‚æ•°(æ³¨: å°ã•ã„ã¨iL=0ã«ãªã‚‰ãªã„)
+m.pL = 0.75;  % å±æ©Ÿã®ç¶™ç¶šç¢ºç‡
+m.sH = m.rstar; % çŠ¶æ…‹Hã§ã®è‡ªç„¶åˆ©å­ç‡ã®å€¤
 
-% ƒJƒŠƒuƒŒ[ƒVƒ‡ƒ“
-% yL‚ÆpiL‚Ìƒ^[ƒQƒbƒg‚ÉpH=0‚Ì‚Æ‚«‚Ìƒ‚ƒfƒ‹‚Ì’l‚ğ‡‚í‚¹‚é‚æ‚¤‚ÉAsL‚Ækap‚Ì’l‚ğƒZƒbƒg
+% ã‚«ãƒªãƒ–ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³
+% yLã¨piLã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã«pH=0ã®ã¨ãã®ãƒ¢ãƒ‡ãƒ«ã®å€¤ã‚’åˆã‚ã›ã‚‹ã‚ˆã†ã«ã€sLã¨kapã®å€¤ã‚’ã‚»ãƒƒãƒˆ
 
-m.pH = 0.0; % Šë‹@‚ª‹N‚±‚éŠm—¦
-x0 = [-2.0, 0.01]; % sL‚Ækap‚Ì‰Šú’l
+m.pH = 0.0; % å±æ©ŸãŒèµ·ã“ã‚‹ç¢ºç‡
+x0 = [-2.0, 0.01]; % sLã¨kapã®åˆæœŸå€¤
 
-% yL‚ÆpiL‚Ìƒ^[ƒQƒbƒg
+% yLã¨piLã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆ
 yLtar = -7.0;
 piLtar = -1.0/4;
 
-% Å¬‰»ŠÖ”(Matlab‚Ìê‡fminsearch)‚ğ—p‚¢‚é
+% æœ€å°åŒ–é–¢æ•°(Matlabã®å ´åˆfminsearch)ã‚’ç”¨ã„ã‚‹
 x = fminsearch(@dist,x0,[],m.sH,m.pH,m.pL,m.bet,m.phi,m.rstar,yLtar,piLtar);
 
-% ƒJƒŠƒuƒŒ[ƒg‚µ‚½ƒpƒ‰ƒ[ƒ^‚ğƒZƒbƒg
-m.sL = x(1); % ó‘ÔL‚Å‚Ì©‘R—˜q—¦‚Ì’l
-m.kap = x(2); % ƒtƒBƒŠƒbƒvƒX‹Èü‚ÌŒX‚«
+% ã‚«ãƒªãƒ–ãƒ¬ãƒ¼ãƒˆã—ãŸãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’ã‚»ãƒƒãƒˆ
+m.sL = x(1); % çŠ¶æ…‹Lã§ã®è‡ªç„¶åˆ©å­ç‡ã®å€¤
+m.kap = x(2); % ãƒ•ã‚£ãƒªãƒƒãƒ—ã‚¹æ›²ç·šã®å‚¾ã
 
-m.maxiter = 2000; % ŒJ‚è•Ô‚µ‰ñ”‚ÌÅ‘å’l
-m.tol = 1e-5; % ‹–—eŒë·
+m.maxiter = 2000; % ç¹°ã‚Šè¿”ã—å›æ•°ã®æœ€å¤§å€¤
+m.tol = 1e-5; % è¨±å®¹èª¤å·®
 
 %%
 tic;
@@ -44,31 +44,45 @@ subplot(231);
 plot(xvec,rvec0*4,'k*-','LineWidth',3.0);
 hold on;
 plot(xvec,rvec1*4,'k*--','LineWidth',3.0);
-plot(xvec,[0 0],'r-');
-title('­ô‹à—˜');
+plot(xvec,[0 0],'k-');
+title('æ”¿ç­–é‡‘åˆ©');
 xticks([0 1]);
 xticklabels({'H','L'});
-set(gca,'Fontsize',12);
+set(gca,'Fontsize',12)
+% set(gca,'FontName','serif') %'Modern') %'Times New Roman')
+%set(gca,'FontWeight','normal')
+set(gcf,'color','w')
 
 subplot(232);
 plot(xvec,yvec0,'k*-','LineWidth',3.0);
 hold on;
 plot(xvec,yvec1,'k*--','LineWidth',3.0);
-plot(xvec,[0 0],'r-');
-title('YoƒMƒƒƒbƒv');
+plot(xvec,[0 0],'k-');
+title('ç”£å‡ºã‚®ãƒ£ãƒƒãƒ—');
 xticks([0 1]);
 xticklabels({'H','L'});
-set(gca,'Fontsize',12);
+set(gca,'Fontsize',12)
+% set(gca,'FontName','serif') %'Modern') %'Times New Roman')
+%set(gca,'FontWeight','normal')
+set(gcf,'color','w')
 
 subplot(233);
 plot(xvec,pvec0*4,'k*-','LineWidth',3.0);
 hold on;
 plot(xvec,pvec1*4,'k*--','LineWidth',3.0);
-plot(xvec,[0 0],'r-');
-title('ƒCƒ“ƒtƒŒ—¦');
+plot(xvec,[0 0],'k-');
+title('ã‚¤ãƒ³ãƒ•ãƒ¬ç‡');
 xticks([0 1]);
 xticklabels({'H','L'});
-set(gca,'Fontsize',12);
-m = legend('p_H=0','p_H=0.025','Location','SouthWest');
+set(gca,'Fontsize',12)
+% set(gca,'FontName','serif') %'Modern') %'Times New Roman')
+%set(gca,'FontWeight','normal')
+set(gcf,'color','w')
+
+m = legend('p_H=0','p_H=0.025','Location','SW');
 m.FontSize = 8;
-% saveas(gcf,'simplepf.eps','epsc2');
+%m.FontName = 'serif'
+%m.FontWeight = 'normal'
+
+saveas(gcf,'Fig5_TwostateNK_R1.eps','epsc2');
+saveas(gcf,'Fig2_TwostateNK_R1.pdf','pdf');
